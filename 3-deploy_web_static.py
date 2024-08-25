@@ -11,7 +11,7 @@ from datetime import datetime
 from os.path import exists, isdir
 import os
 
-env.hosts = ['54.160.77.90', '10.25.190.21']
+env.hosts = ['3.89.155.80', '54.237.29.246']
 
 
 def do_pack():
