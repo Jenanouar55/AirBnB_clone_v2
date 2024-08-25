@@ -34,17 +34,34 @@ def do_deploy(archive_path):
         print("Archive path does not exist")
         return False
     try:
-        file_n = os.path.basename(archive_path)
-        no_ext = file_n.split(".")[0]
+        file_name = os.path.basename(archive_path)
+        no_ext = file_name.split(".")[0]
         path = "/data/web_static/releases/"
+
+        # Upload the archive to the server
         put(archive_path, '/tmp/')
+
+        # Create the directory on the server
         run('mkdir -p {}{}/'.format(path, no_ext))
-        run('tar -xzf /tmp/{} -C {}{}/'.format(file_n, path, no_ext))
-        run('rm /tmp/{}'.format(file_n))
+
+        # Extract the archive to the new directory
+        run('tar -xzf /tmp/{} -C {}{}/'.format(file_name, path, no_ext))
+
+        # Remove the archive from the server
+        run('rm /tmp/{}'.format(file_name))
+
+        # Move the contents of web_static to the new release directory
         run('mv {0}{1}/web_static/* {0}{1}/'.format(path, no_ext))
+
+        # Remove the web_static directory
         run('rm -rf {}{}/web_static'.format(path, no_ext))
+
+        # Remove the current symbolic link
         run('rm -rf /data/web_static/current')
+
+        # Create a new symbolic link to the new release
         run('ln -s {}{}/ /data/web_static/current'.format(path, no_ext))
+
         return True
     except Exception as e:
         print(f"Error deploying archive: {e}")
